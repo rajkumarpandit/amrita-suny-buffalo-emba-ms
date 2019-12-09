@@ -1,0 +1,183 @@
+---
+title: "Analyzing Boston Housing Data"
+author: 'Group #1'
+date: "08-Dec-2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#### Packages Initialization
+
+
+```{r results = 'hide', warning = FALSE}
+library(knitr)
+library(markdown)
+```
+
+## Data
+### Introduction
+The file BostonHousing.csv contains information collected by the US Bureau of the Census concerning housing in the area of Boston, Massachusetts.
+
+
+
+```{r results = 'hide',  warning = FALSE}
+getwd()
+setwd('C://TCSInternals//AmritaSUNY-Buffalo//Courses//BA-1//Data//reba1courseoutline')
+boston.df<-read.csv("BostonHousing.csv")
+str(boston.df)
+```
+
+```{r include=FALSE, results = 'show',  warning = FALSE}
+
+Variables<-	c("CRIM 	"    ,
+    "ZN 	"    ,
+    "INDUS 	"    ,
+    "CHAS 	"    ,
+    "NOX 	"    ,
+    "RM 	"    ,
+    "AGE 	"    ,
+    "DIS 	"    ,
+    "RAD 	"    ,
+    "TAX 	"    ,
+    "PTRATIO "   ,
+    "LSTAT 	"    ,
+    "MEDV 	"    ,
+    "CAT.MEDV"  )
+Meaning<-c("Crime rate"
+	,"Percentage of residential land zoned for lots over 25,000 sq.ft"
+	,"Percentage of land occupied by nonretail business"
+	,"Does tract bound Charles River? (= 1 if tract bounds river, = 0 otherwise)"
+	,"Nitric oxide concentration (parts per 10 million)"
+	,"Average number of rooms per dwelling"
+	,"Percentage of owner-occupied units built prior to 1940"
+	,"Weighted distances to five Boston employment centers"
+	,"Index of accessibility to radial highways"
+	,"Full-value property tax rate per $10,000"
+	,"Pupil-to-teacher ratio by town"
+	,"Percentage of lower status of the population"
+	,"Median value of owner-occupied homes in $1000s"
+ 	,"Is median value of owner-occupied homes in tract above $30,000. (CAT.MEDV = 1) or not (CAT.MEDV = 0) ")
+df.vars = data.frame(Variables, Meaning)
+
+
+```
+
+The dataset includes information on 506 census housing tracts in the Boston area.
+Their details as below -
+
+#### Structure of the data
+```{r  warning = FALSE}
+kable(df.vars, format = 'markdown')
+```
+
+#### Dimension of the data
+```{r  warning = FALSE}
+dim(boston.df)
+```
+
+#### Let's have a glimpse of the data
+```{r  warning = FALSE}
+kable(head(boston.df, n = 10L), format = 'markdown') 
+
+```
+
+## Data Analysis
+#### Summary
+
+```{r  warning = FALSE}
+
+kable(summary(boston.df), format = 'markdown')  
+
+```
+<b> Some of the points to observe: </b>
+
+- CHAS(Does tract bound Charles River? (= 1 if tract bounds river, = 0 otherwise)), a categorical variable, has large majority (>90%) of the observations equal to 0, which indicates most of the areas do not tract bound the Charles River.
+- CRIM(Crime rate), a numerical variable, 
+  - says that half of the distribution for crim are in between 0.006 and 0.256, 
+  - the third 25% of the observations are between 0.25 and 3.677, and 
+  - the last 25% of the values stretch from 3.677 to 89.0.
+- Other varibale that exihibit behaviour similar to CRIM is ZN.
+
+
+
+</br></br>
+
+### Dispersion of the Median value of owner-occupied homes (MEDV) using applying stem and leaf diagram.
+
+
+```{r  warning = FALSE}
+stem(boston.df$MEDV, scale = 2, width = 80)
+```
+
+</br></br>
+
+### Compare crime rates among the places with above average MEDV values and below average MEDV values by applying Boxplot diagram
+
+
+
+Plotting Crime rate
+
+```{r  warning = FALSE}
+hist(boston.df$CRIM, xlab = "Crime Rate", main = 'Histogram of Crime Rate', col = 'yellow')
+```
+
+Box Plot of Crime rate
+
+```{r  warning = FALSE}
+boxplot(boston.df$CRIM, xlab = "Crime Rate", main = 'Box plot of Crime Rate')
+```
+
+Plotting 'MEDV:Median value of owner-occupied homes in $1000s'
+```{r  warning = FALSE}
+
+hist(boston.df$MEDV, xlab='Median value of owner-occupied homes in $1000s', main = 'Histogram of Median owner-occupied homes', col='yellow')
+```
+
+Boxplot between 'CRIM:Crime rate' and 'MEDV:Median value of owner-occupied homes in $1000s'
+
+```{r  warning = FALSE}
+boxplot(boston.df$CRIM, boston.df$MEDV, names = c('Crime rate', 'Md owner-occupied homes in $1000s'),
+        xlab='Variables', ylab='Percentage', col = 'yellow')
+```
+
+
+###	Prepare scatter plot and Pearson’s correlation coefficient among AGE and DIS variables
+Plotting 'Percentage of owner-occupied units built prior to 1940' and 'Weighted distances to five Boston employment centers'
+```{r  warning = FALSE}
+plot(density(boston.df$AGE), xlab = 'Percentage of owner-occupied units built prior to 1940', shade = TRUE)
+plot(density(boston.df$DIS), xlab='Weighted distances to five Boston employment centers', shade = TRUE)
+cor(boston.df$DIS, boston.df$AGE)
+pairs(~DIS+AGE, data=boston.df)
+```
+
+## Conclusion
+
+We used R software to read data from CSV file, and analyzed it based on our learning of different visualization graphs to see if there is any correlation between the pair of variables.
+We could infer some of the points - 
+The relation between age of the building to the proximity to employment centre are inversely related.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
