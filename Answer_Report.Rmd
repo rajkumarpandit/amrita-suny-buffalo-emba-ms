@@ -1,0 +1,180 @@
+---
+title: "Personal Loan Acceptance"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Raj Kumar Pandit
+
+### BL.BU.P2EMB19008
+
+### Business Analytics 1
+
+#### Department of Management
+#### Amrita Vishwa Vidyapeetham (University)
+
+
+***
+
+
+## Libraries Used
+
+```{r warning=FALSE, results = 'hide'}
+library(knitr)
+library(markdown)
+library(dplyr)
+library(GGally)
+library(tidyverse)
+```
+
+## Setting up the local location
+
+```{r warning=FALSE, results = 'hide'}
+getwd()
+setwd('C://TCSInternals//AmritaSUNY-Buffalo//Courses//BA-1//assignment_1')
+```
+
+## Data
+
+Loading the file into R studio
+```{r warning=FALSE}
+ubank.df<-read.csv("UniversalBank.csv")
+```
+
+## Introduce the case by applying dim() and str().
+
+Dimension
+```{r warning=FALSE}
+dim(ubank.df)
+```
+It has 5000 rows and 14 columns
+
+## Explain all demographic variables i.e. age, experience, and income
+
+Structure of the variables whose values fill the columns of the file
+
+```{r warning=FALSE}
+str(ubank.df)
+```
+
+### Data snapshot
+
+```{r warning=FALSE}
+head(ubank.df)
+```
+
+### Visualizing categorical variable 'education'
+
+Cross Table
+
+```{r warning=FALSE}
+edu<- factor(ubank.df$Education, c(1,2,3),labels = c('Undergraduates','Graduate', 'Professional'))
+edu_Tab<- table(edu)
+addmargins( edu_Tab)
+```
+
+Cross Table with Percent Data
+
+```{r warning=FALSE}
+addmargins(round(100*prop.table(edu_Tab),digits=0))
+```
+### Bar chart
+
+```{r warning=FALSE}
+barplot(edu_Tab, xlab='Education Level',ylab='Frequency',main="Education Data Distribution",
+         col=c('olivedrab2', 'orange1','purple2'), ylim = c(0,2500))
+```
+
+Bar char correctly concides with data represented in cross table
+
+## Scatter plot between Age, Experience, Income, and CCAvg
+
+Getting subset of data
+
+```{r warning=FALSE}
+aeic.df<-select ( ubank.df, c(Age, Experience, Income, CCAvg ))
+summary(aeic.df)
+plot(density(aeic.df$Age), main = 'Density plot of Age')
+plot(density(aeic.df$Experience), main = 'Density plot of Experience')
+plot(density(aeic.df$Income), main = 'Density plot of Income')
+plot(density(aeic.df$CCAvg), main = 'Density plot of CCAGV')
+
+```
+
+Drawing scatter plot using 'GGally'
+
+```{r warning=FALSE}
+
+ggpairs(aeic.df)
+```
+
+## Boxplot of The Income Variable 
+
+```{r warning=FALSE}
+boxplot(ubank.df$Income, horizontal = TRUE, axes = TRUE, staplewex = 1)
+text(x=fivenum(ubank.df$Income), labels =fivenum(ubank.df$Income), y=1.25)
+```
+
+### for drawing box plot
+
+```{r warning=FALSE}
+min(ubank.df$Income)
+max(ubank.df$Income)
+quantile(ubank.df$Income)
+```
+
+## Probability Calculation
+
+### (1)  P(CC = 1 | Loan = 1) (the proportion of credit card holders among the loan acceptors)
+
+```{r warning=FALSE}
+pLoan <-which(ubank.df$Personal.Loan == 1)
+
+```
+ppLoan this has all the indices where values ==1 thus n[y=1] is calculated
+
+```{r warning=FALSE}
+sum(ubank.df$CreditCard[pLoan] ==1)/length(pLoan)
+
+```
+
+This ratio of n[cc = 1 INTERSECT Loan = 1] / n[Loan==1]
+ 
+### (2)  P(Online = 1 | Loan = 1)
+
+```{r warning=FALSE}
+sum(ubank.df$Online[pLoan] ==1)/length(pLoan)
+```
+ this ratio of n[Online ==1 INTERSECT Loan = 1] / n[Loan==1]
+
+### (3) P(Loan = 1) (the proportion of loan acceptors)
+
+```{r warning=FALSE}
+length(pLoan)/dim(ubank.df)[1]
+```
+
+### (4) P(CC = 1 / Loan = 0)
+
+```{r warning=FALSE}
+pLoanZero <-which(ubank.df$Personal.Loan == 0)
+sum(ubank.df$CreditCard[pLoanZero] ==1)/length(pLoanZero)
+```
+
+### (5) P(Online = 1 / Loan = 0)
+
+```{r warning=FALSE}
+sum(ubank.df$Online[pLoanZero] ==1)/length(pLoanZero)
+```
+
+### (6) P(Loan = 0)
+
+```{r warning=FALSE}
+length(pLoanZero)/dim(ubank.df)[1]
+```
+
